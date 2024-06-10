@@ -107,24 +107,67 @@
 
 #____________________________________________________________________________
 
+# from selenium import webdriver
+# from selenium.webdriver import Keys             # для ввода текста как бы с клавиатуры
+# from selenium.webdriver.common.by import By     # для поиска элементов на странице через DOM
+# import time
+#
+# browser = webdriver.Chrome()
+# browser.get('https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0')
+#
+# assert "Википедия" in browser.title             # проверяем есть ли слово Википедия в открытом сайте
+# time.sleep(3)
+# search_box = browser.find_element(By.ID, "searchInput")
+# search_box.send_keys("Электромобиль")
+# time.sleep(3)
+# search_box.send_keys(Keys.RETURN)
+#
+# time.sleep(3)
+# a = browser.find_element(By.LINK_TEXT, "Электрокар")
+# a.click()
+#
+# time.sleep(15)
+
+#____________________________________________________________________________
+
 from selenium import webdriver
 from selenium.webdriver import Keys             # для ввода текста как бы с клавиатуры
 from selenium.webdriver.common.by import By     # для поиска элементов на странице через DOM
 import time
+import random
 
-browser = webdriver.Chrome()
-browser.get('https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0')
+def main():
+    browser = webdriver.Chrome()
+    browser.get('https://ru.wikipedia.org/wiki/%D0%97%D0%B0%D0%B3%D0%BB%D0%B0%D0%B2%D0%BD%D0%B0%D1%8F_%D1%81%D1%82%D1%80%D0%B0%D0%BD%D0%B8%D1%86%D0%B0')
 
-assert "Википедия" in browser.title             # проверяем есть ли слово Википедия в открытом сайте
-time.sleep(3)
-search_box = browser.find_element(By.ID, "searchInput")
-search_box.send_keys("Электромобиль")
-time.sleep(3)
-search_box.send_keys(Keys.RETURN)
+    query = input("Введите запрос: ")
+    search_box = browser.find_element(By.ID, "searchInput")
+    search_box.send_keys(query)
+    search_box.send_keys(Keys.RETURN)
+    a = browser.find_element(By.LINK_TEXT, query)
+    a.click()
 
-time.sleep(3)
-a = browser.find_element(By.LINK_TEXT, "Электрокар")
-a.click()
+    while True:
+        print("\nВыберите действие:")
+        print("1. Листать параграфы текущей статьи")
+        print("2. Перейти на одну из связанных страниц")
+        print("3. Выйти из программы")
+        choice = input("Ваш выбор: ")
 
-time.sleep(15)
+        if choice == '1':
+            paragraphs = browser.find_elements(By.TAG_NAME, "p")
+            for paragraph in paragraphs:
+                print(paragraph.text)
+                input()
+
+        elif choice == '2':
+           hr = browser.find_element(By.TAG_NAME, "a").get_attribute("href")
+           browser.get(hr)
+
+        elif choice == '3':
+            break
+        else:
+            print("Неверный выбор. Пожалуйста, выберите 1, 2 или 3.")
+
+main()
 
